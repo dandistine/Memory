@@ -11,131 +11,6 @@
 std::random_device rd;
 std::mt19937 rng(rd());
 
-typedef struct {
-	double h;       // angle in degrees
-	double s;       // a fraction between 0 and 1
-	double v;       // a fraction between 0 and 1
-} hsv;
-
-hsv rgb2hsv(olc::Pixel in_)
-{
-	struct inner{
-		float r;
-		float g;
-		float b;
-	};
-
-	inner in = { in_.r / 255.0f, in_.g / 255.0f , in_.b / 255.0f };
-
-	hsv         out;
-	double      min, max, delta;
-
-	min = in.r < in.g ? in.r : in.g;
-	min = min < in.b ? min : in.b;
-
-	max = in.r > in.g ? in.r : in.g;
-	max = max > in.b ? max : in.b;
-
-	out.v = max;                                // v
-	delta = max - min;
-	if (delta < 0.00001)
-	{
-		out.s = 0;
-		out.h = 0; // undefined, maybe nan?
-		return out;
-	}
-	if (max > 0.0) { // NOTE: if Max is == 0, this divide would cause a crash
-		out.s = (delta / max);                  // s
-	}
-	else {
-		// if max is 0, then r = g = b = 0              
-		// s = 0, h is undefined
-		out.s = 0.0;
-		out.h = NAN;                            // its now undefined
-		return out;
-	}
-	if (in.r >= max)                           // > is bogus, just keeps compilor happy
-		out.h = (in.g - in.b) / delta;        // between yellow & magenta
-	else
-		if (in.g >= max)
-			out.h = 2.0 + (in.b - in.r) / delta;  // between cyan & yellow
-		else
-			out.h = 4.0 + (in.r - in.g) / delta;  // between magenta & cyan
-
-	out.h *= 60.0;                              // degrees
-
-	if (out.h < 0.0)
-		out.h += 360.0;
-
-	return out;
-}
-
-olc::Pixel hsv2rgb(hsv in)
-{
-	struct inner {
-		float r;
-		float g;
-		float b;
-	};
-
-	double      hh, p, q, t, ff;
-	long        i;
-	inner         out;
-
-	//if (in.s <= 0.0) {       // < is bogus, just shuts up warnings
-	//	out.r = in.v;
-	//	out.g = in.v;
-	//	out.b = in.v;
-	//	return out;
-	//}
-	hh = in.h;
-	if (hh >= 360.0) hh = 0.0;
-	hh /= 60.0;
-	i = (long)hh;
-	ff = hh - i;
-	p = in.v * (1.0 - in.s);
-	q = in.v * (1.0 - (in.s * ff));
-	t = in.v * (1.0 - (in.s * (1.0 - ff)));
-
-	switch (i) {
-	case 0:
-		out.r = in.v;
-		out.g = t;
-		out.b = p;
-		break;
-	case 1:
-		out.r = q;
-		out.g = in.v;
-		out.b = p;
-		break;
-	case 2:
-		out.r = p;
-		out.g = in.v;
-		out.b = t;
-		break;
-	case 3:
-		out.r = p;
-		out.g = q;
-		out.b = in.v;
-		break;
-	case 4:
-		out.r = t;
-		out.g = p;
-		out.b = in.v;
-		break;
-	case 5:
-	default:
-		out.r = in.v;
-		out.g = p;
-		out.b = q;
-		break;
-	}
-
-	return olc::PixelF(out.r, out.g, out.b);
-
-	//return out;
-}
-
 template <typename T>
 T lerp(T v0, T v1, float t) {
 	return (1 - t) * v0 + t * v1;
@@ -242,34 +117,6 @@ struct StartScreenState : public State {
 		olc::BLANK
 	};
 
-	//olc::vf2d m_p[4] = {
-	//	{32.0f, 64.0f},
-	//	{32.0f, 128.0f},
-	//	{128.0f, 98.0f},
-	//	{128.0f, 94.0f},
-	//};
-
-	//olc::vf2d m_uv[4] = {
-	//	{0.0f, 0.0f},
-	//	{0.0f, 1.0f},
-	//	{0.5f, 1.0f},
-	//	{0.5f, 0.0f},
-	//};
-
-	//olc::vf2d m_p2[4] = {
-	//	{128.0f, 96.0f},
-	//	{128.0f, 98.0f},
-	//	{224.0f, 128.0f},
-	//	{224.0f, 64.0f},
-	//};
-
-	//olc::vf2d m_uv2[4] = {
-	//	{0.5f, 1.0f},
-	//	{0.5f, 0.0f},
-	//	{1.0f, 0.0f},
-	//	{1.0f, 1.0f},
-	//};
-
 	void EnterState() override { 
 		olc::vf2d text_size = pge->GetTextSize("MEMORY");
 
@@ -299,11 +146,7 @@ struct StartScreenState : public State {
 
 		olc::Decal* m = memory.Decal();
 		
-		//pge->DrawExplicitDecal(m, m_p, m_uv, memory_color, 4);
-		//pge->DrawExplicitDecal(m, m_p2, m_uv2, memory_color, 4);
 		pge->DrawExplicitDecal(m, &memory_pos[0], memory_uv, memory_color);
-		//pge->DrawDecal(olc::vf2d{ 64.0f, 64.0f }, m);
-		//pge->DrawWarpedDecal(m, memory_pos);
 
 		if (pge->GetMouse(0).bPressed) {
 			if (PointInRect(pge->GetMousePos(), button_pos, button_size)) {
@@ -511,14 +354,9 @@ struct AnimateSecondState : public State {
 			}
 			else {
 				DrawFlipAnimationHorizontal(fTotalTime, c, pge);
-				/*float t = std::fabsf(Ease(fTotalTime) - 0.5f) * 2.0f;
-				olc::vf2d new_pos = c.pos + olc::vf2d{ (1.0f - t) * c.size.x / 2.0f, 0.0f };
-				olc::vf2d new_size = olc::vf2d{ t * c.size.x, c.size.y };*/
 				if (fTotalTime > 0.5f) {
 					c.faceUp = true;
 				}
-
-				//pge->FillRectDecal(new_pos, new_size, c.faceUp ? c.colorFront : c.colorBack);
 			}
 		}
 
@@ -680,7 +518,6 @@ struct MixupState : public State {
 		for (const auto& c : the_cards) {
 			pge->FillRectDecal(c.pos, c.size, c.faceUp ? c.colorFront : c.colorBack);
 		}
-		//pge->DrawStringDecal({ 10.0f, 10.0f }, std::to_string(fTotalTime));
 
 		switch (inner_state) {
 		case InnerState::PICK:
@@ -826,7 +663,6 @@ void MessWithColors(float fElapsedTime) {
 	}
 }
 
-
 // Override base class with your custom functionality
 class MemoryGame : public olc::PixelGameEngine
 {
@@ -886,7 +722,6 @@ public:
 
 		if (current_state != GameState::START_SCREEN) {
 			std::string score_str = "Round: " + std::to_string(round_number) + "  Score: " + std::to_string(score);
-			//DrawStringDecal({ ScreenWidth() * 0.75f, 1.0f }, std::to_string(score));
 			DrawStringDecal({ ScreenWidth() * 0.2f, 1.0f }, score_str);
 			
 			if (round_number > 1) {
