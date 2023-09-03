@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32407.343
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Memory", "Memory\Memory.vcxproj", "{3D34FB5F-A3B0-44B6-85A8-72BACE7AB217}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9701D3CF-DECC-430E-AD9F-BDB0DC9D9C50}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		basic_template.html = basic_template.html
+		emscripten_build.bat = emscripten_build.bat
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D34FB5F-A3B0-44B6-85A8-72BACE7AB217}.Debug|x64.ActiveCfg = Debug|x64
+		{3D34FB5F-A3B0-44B6-85A8-72BACE7AB217}.Debug|x64.Build.0 = Debug|x64
+		{3D34FB5F-A3B0-44B6-85A8-72BACE7AB217}.Debug|x86.ActiveCfg = Debug|Win32
+		{3D34FB5F-A3B0-44B6-85A8-72BACE7AB217}.Debug|x86.Build.0 = Debug|Win32
+		{3D34FB5F-A3B0-44B6-85A8-72BACE7AB217}.Release|x64.ActiveCfg = Release|x64
+		{3D34FB5F-A3B0-44B6-85A8-72BACE7AB217}.Release|x64.Build.0 = Release|x64
+		{3D34FB5F-A3B0-44B6-85A8-72BACE7AB217}.Release|x86.ActiveCfg = Release|Win32
+		{3D34FB5F-A3B0-44B6-85A8-72BACE7AB217}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9827DDBE-2360-4935-AE92-D3253F201464}
+	EndGlobalSection
+EndGlobal
